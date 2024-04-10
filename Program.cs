@@ -1,40 +1,73 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 class Program
 {
+    static int CalculateDigitSum(int number)
+    {
+        int sum = 0;
+        while (number > 0)
+        {
+            sum += number % 10;
+            number /= 10;
+        }
+        return sum;
+    }
+
+    static List<List<int>> GenerateSequences(int n)
+    {
+        List<List<int>> sequences = new List<List<int>>();
+        Dictionary<int, List<int>> digitSumMap = new Dictionary<int, List<int>>();
+
+        for (int i = 0; i < n; i++)
+        {
+            int digitSum = CalculateDigitSum(i);
+            if (!digitSumMap.ContainsKey(digitSum))
+            {
+                digitSumMap[digitSum] = new List<int>();
+            }
+            digitSumMap[digitSum].Add(i);
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!digitSumMap.ContainsKey(i))
+            {
+                sequences.Add(new List<int>());
+            }
+            else
+            {
+                sequences.Add(digitSumMap[i]);
+            }
+        }
+
+        return sequences;
+    }
+
     static void Main()
     {
-        Console.WriteLine("Виберіть гілку для виклику:");
-        string branchName = Console.ReadLine();
+        Console.Write("Enter a positive integer n: ");
+        int n = Convert.ToInt32(Console.ReadLine());
 
-        CheckoutBranch(branchName); // Перехід на вказану гілку
+        long memoryBefore = GC.GetTotalMemory(true);
 
-        RunCodeFromBranch(branchName); // Запуск коду з вказаної гілки
-    }
+        List<List<int>> sequences = GenerateSequences(n);
 
-    static void CheckoutBranch(string branchName)
-    {
-        // Використовуйте git checkout для переходу на вказану гілку
-        ProcessStartInfo psi = new ProcessStartInfo();
-        psi.FileName = "git";
-        psi.Arguments = "checkout " + branchName;
-        Process.Start(psi).WaitForExit();
-    }
+        Console.WriteLine("Number sequences:");
 
-    static void RunCodeFromBranch(string branchName)
-    {
-        // Перед запуском коду з гілки, переконайтеся, що ви перебуваєте на неї
-        Process.Start(new ProcessStartInfo
+        for (int i = 0; i < n; i++)
         {
-            FileName = "cmd",
-            Arguments = $"/c dotnet run",
-            WorkingDirectory = $"https://github.com/kostenkovitalina/l/blob/5cc24024675c934a7bf91bb7a59914eec3f1d8c1/start-programs.cs{branchName}" // Замініть шлях на реальний шлях до вашого проекту
-        }).WaitForExit();
+            Console.Write($"Numbers divisible by the digit sum of {i}: ");
+            Console.WriteLine(string.Join(", ", sequences[i]));
+        }
+
+        long memoryAfter = GC.GetTotalMemory(true);
+        long memoryUsed = memoryAfter - memoryBefore;
+
+        Console.WriteLine($"Memory used: {memoryUsed} bytes");
+        Console.ReadLine();
     }
 }
-
-
-
-
-
