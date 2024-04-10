@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 class MainClassVariant9
 {
@@ -55,13 +55,13 @@ class MainClassVariant9
         int maxIndex, minIndex;
         FindMinMaxIndices(arr, out maxIndex, out minIndex);
 
-        int startIndex = Math.Min(maxIndex, minIndex) + 1;
-        int endIndex = Math.Max(maxIndex, minIndex) - 1;
+        int startIndex = Math.Min(maxIndex, minIndex);
+        int endIndex = Math.Max(maxIndex, minIndex);
 
         // Перевіряємо, чи є елементи для видалення
         if (startIndex >= endIndex)
         {
-            Console.WriteLine("Немає елементів для видалення. Між першим з максимальних та останнім з мінімальних недостатньо елементів.");
+            Console.WriteLine("Результат: Пустий рядок, тому що недостатньо елементів між першим мінімальним і максимальним значеннями.");
             return;
         }
 
@@ -72,4 +72,3 @@ class MainClassVariant9
         Array.Resize(ref arr, arr.Length - elementsToRemove);
     }
 }
-
