@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 class MainClassVariant12
 {
@@ -21,7 +21,7 @@ class MainClassVariant12
         }
 
         int maxRowIndex = FindMaxRowIndex(array);
-        AddRowBeforeMax(array, maxRowIndex);
+        array = AddRow(array, maxRowIndex);
 
         Console.WriteLine("Result:");
         for (int i = 0; i < array.Length; i++)
@@ -57,17 +57,26 @@ class MainClassVariant12
         return maxRowIndex;
     }
 
-    static void AddRowBeforeMax(int[][] array, int maxRowIndex)
+    static int[][] AddRow(int[][] array, int maxRowIndex)
     {
-        int[] newRow = new int[array[maxRowIndex].Length];
-        Array.Copy(array[maxRowIndex], newRow, array[maxRowIndex].Length);
+        int[][] newArray = new int[array.Length + 1][];
 
-        for (int i = array.Length - 1; i > maxRowIndex; i--)
+        for (int i = 0; i <= maxRowIndex; i++)
         {
-            array[i] = array[i - 1];
+            newArray[i] = array[i];
         }
 
-        array[maxRowIndex] = newRow;
+        int[] newRow = new int[array[maxRowIndex].Length];
+        Array.Copy(array[maxRowIndex], newRow, newRow.Length);
+        newArray[maxRowIndex + 1] = newRow;
+
+        for (int i = maxRowIndex + 1; i < array.Length; i++)
+        {
+            newArray[i + 1] = array[i];
+        }
+
+        return newArray;
     }
 }
+
 
