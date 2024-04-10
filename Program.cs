@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using static System.Net.WebRequestMethods;
+using System.IO;
 
 class Program
 {
@@ -12,10 +12,10 @@ class Program
         switch (branchName)
         {
             case "Vitalina":
-                OpenAndRunGitHubFile("Vitalina/start-programs.cs");
+                RunFileFromBranch("Vitalina", "start-programs.cs");
                 break;
             case "Kristina":
-                OpenAndRunGitHubFile("Kristina/назва_файлу.cs");
+                RunFileFromBranch("Kristina", "назва_файлу.cs");
                 break;
             default:
                 Console.WriteLine("Невідома гілка");
@@ -23,19 +23,25 @@ class Program
         }
     }
 
-    static void OpenAndRunGitHubFile(string branchName)
+    static void RunFileFromBranch(string branchName, string fileName)
     {
-        // Відкриваємо файл та запускаємо його
-        Process.Start(new ProcessStartInfo
+        string filePath = Path.Combine(branchName, fileName);
+
+        if (File.Exists(filePath))
         {
-            FileName = "cmd",
-            Arguments = $"/c start {branchName}/start-programs.cs & dotnet run",
-            UseShellExecute = true,
-            WorkingDirectory = @"https://github.com/kostenkovitalina/l.git"
-        });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true,
+                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
+            });
+        }
+        else
+        {
+            Console.WriteLine("Файл не знайдено");
+        }
     }
 }
-
 
 
 
