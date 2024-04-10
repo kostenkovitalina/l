@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
 class MainClassVariant2B
 {
@@ -8,7 +7,7 @@ class MainClassVariant2B
         int n = int.Parse(Console.ReadLine());
 
         long memoryBefore = GC.GetTotalMemory(true);
-        List<List<int>> numbers = GenerateNumbersB(n);
+        int[,] numbers = GenerateNumbersB(n);
 
         Console.WriteLine("Memory used for 2b: " + (GC.GetTotalMemory(true) - memoryBefore) + " bytes");
 
@@ -17,25 +16,21 @@ class MainClassVariant2B
         Console.ReadKey();
     }
 
-    private static List<List<int>> GenerateNumbersB(int n)
+    private static int[,] GenerateNumbersB(int n)
     {
-        List<List<int>> numbers = new List<List<int>>();
+        int[,] numbers = new int[n + 1, n + 1];
 
-        for (int i = 0; i < n; i++)
+        for (int i = 1; i <= n; i++)
         {
             int sum = DigitSum(i);
             if (sum == 0) continue; // Перевірка на 0
             int count = CountMultiples(n, sum);
-            while (numbers.Count <= sum)
-            {
-                numbers.Add(new List<int>());
-            }
 
             for (int j = 1; j <= n; j++)
             {
                 if (j % sum == 0)
                 {
-                    numbers[sum].Add(j);
+                    numbers[sum, count++] = j;
                 }
             }
         }
@@ -67,15 +62,19 @@ class MainClassVariant2B
         return count;
     }
 
-    private static void PrintNumbers(List<List<int>> numbers)
+    private static void PrintNumbers(int[,] numbers)
     {
-        foreach (var list in numbers)
+        int rows = numbers.GetLength(0);
+        int cols = numbers.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
         {
-            foreach (var num in list)
+            for (int j = 0; j < cols && numbers[i, j] != 0; j++)
             {
-                Console.Write(num + " ");
+                Console.Write(numbers[i, j] + " ");
             }
             Console.WriteLine();
         }
     }
 }
+
