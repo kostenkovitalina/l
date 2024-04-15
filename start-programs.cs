@@ -1,8 +1,8 @@
 ﻿using System;
 
-partial class MainClass
+partial class ExecuteVariant_Vitalina
 {
-    static void ExecuteVariant_Vitalina(string[] args)
+    static void ExecuteVariant(string[] args)
     {
         Console.WriteLine("Choose an option:");
         Console.WriteLine("1. Block 1: Variant 9");
