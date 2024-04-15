@@ -17,7 +17,7 @@ class Program
             switch (choice)
             {
                 case 1:
-                    ExecuteVariant_Vitalina();
+                    MainClass.ExecuteVariant_Vitalina(args); ;
                     break;
                 case 2:
                     ExecuteVariant_Kristina();
