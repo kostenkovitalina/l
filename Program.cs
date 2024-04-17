@@ -6,29 +6,39 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Available branches:");
-        Console.WriteLine("1. Vitalina");
-        Console.WriteLine("2. Kristina");
+        Console.WriteLine("1. Switch to Vitalina branch");
+        Console.WriteLine("2. Switch to Kristina branch");
         Console.Write("Enter the number of the branch you want to switch to: ");
 
-        // Отримати вибір користувача
         int choice = int.Parse(Console.ReadLine());
 
         // Перемикаємося на гілку згідно вибору користувача
-        string branchName = (choice == 1) ? "Vitalina" : "Kristina";
-        SwitchToBranch(branchName);
-
-        // Викликаємо потрібний файл
-        string filePath = (branchName == "Vitalina") ? "start-programs.cs" : "other-file.cs";
-        RunFile(filePath);
+        switch (choice)
+        {
+            case 1:
+                SwitchToBranch("Vitalina");
+                break;
+            case 2:
+                SwitchToBranch("Kristina");
+                break;
+            default:
+                Console.WriteLine("Invalid choice.");
+                break;
+        }
 
         Console.ReadLine(); // Зберігаємо вікно консолі відкритим
     }
 
     static void SwitchToBranch(string branchName)
     {
+        // Виконуємо git команду для перемикання на іншу гілку
         string gitCommand = $"git checkout {branchName}";
         ExecuteCommand(gitCommand);
         Console.WriteLine($"Switched to branch: {branchName}");
+
+        // Викликаємо потрібний файл
+        string filePath = (branchName == "Vitalina") ? "start-programs.cs" : "other-file.cs";
+        RunFile(filePath);
     }
 
     static void RunFile(string filePath)
