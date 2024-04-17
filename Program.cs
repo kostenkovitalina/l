@@ -1,50 +1,89 @@
 ﻿using System;
+using System.Diagnostics;
 
 class Program
 {
     static void Main(string[] args)
     {
-        while (true)
+        Console.WriteLine("Available branches:");
+        Console.WriteLine("1. Vitalina");
+        Console.WriteLine("2. Kristina");
+        Console.Write("Enter the number of the branch you want to switch to: ");
+
+        // Get user input
+        int choice = int.Parse(Console.ReadLine());
+
+        // Switch based on user choice
+        switch (choice)
         {
-            Console.WriteLine("Меню:");
-            Console.WriteLine("1. Виконати варіант студента Віталіна");
-            Console.WriteLine("2. Виконати варіант студента Крістіна");
-            Console.WriteLine("3. Перестворити масив");
-            Console.WriteLine("6. Вийти з програми");
-
-            int choice = GetChoice();
-
-            switch (choice)
-            {
-                case 1:
-                   ExecuteVariant_Vitalina(args);
-                    break;
-                case 2:
-                    ExecuteVariant_Kristina();
-                    break;
-                case 3:
-                    RecreateArray();
-                    break;
-                case 6:
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("Неправильний вибір. Спробуйте ще раз.");
-                    break;
-            }
+            case 1:
+                SwitchBranch("Vitalina");
+                break;
+            case 2:
+                SwitchBranch("Kristina");
+                break;
+            default:
+                Console.WriteLine("Invalid choice. Exiting...");
+                break;
         }
+
+        Console.ReadLine(); // Keep console window open
     }
 
-    static int GetChoice()
+    static void SwitchBranch(string branchName)
     {
-        Console.Write("Ваш вибір: ");
-        int choice;
-        while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 6)
+        // Stash local changes
+        string stashCommand = "git stash";
+        string stashOutput = ExecuteCommand(stashCommand);
+        Console.WriteLine(stashOutput);
+
+        // Execute git command to switch branch
+        string gitCommand = $"git checkout {branchName}";
+        string output = ExecuteCommand(gitCommand);
+        Console.WriteLine(output);
+        Console.WriteLine($"Switched to branch: {branchName}");
+
+        // Apply stashed changes if any
+        string applyStashCommand = "git stash apply";
+        string applyStashOutput = ExecuteCommand(applyStashCommand);
+        Console.WriteLine(applyStashOutput);
+    }
+
+    static string ExecuteCommand(string command)
+    {
+        // Create ProcessStartInfo
+        ProcessStartInfo psi = new ProcessStartInfo
         {
-            Console.WriteLine("Неправильне значення. Введіть число від 1 до 6.");
-            Console.Write("Ваш вибір: ");
+            FileName = "cmd.exe",
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        // Start the process
+        Process proc = new Process { StartInfo = psi };
+        proc.Start();
+
+        // Execute the command
+        proc.StandardInput.WriteLine(command);
+        proc.StandardInput.Flush();
+        proc.StandardInput.Close();
+
+        // Get output and errors
+        string output = proc.StandardOutput.ReadToEnd();
+        string errors = proc.StandardError.ReadToEnd();
+
+        proc.WaitForExit();
+
+        // Check for errors
+        if (!string.IsNullOrEmpty(errors))
+        {
+            throw new Exception($"Error executing command: {errors}");
         }
-        return choice;
+
+        return output;
     }
 }
 
