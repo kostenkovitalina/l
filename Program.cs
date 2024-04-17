@@ -44,7 +44,8 @@ class Program
         Console.WriteLine($"Switched to branch: {branchName}");
 
         // Apply stashed changes if any
-        string applyStashCommand = "git stash apply";
+        string applyStashCommand = "git stash pop --quiet";
+
         string applyStashOutput = ExecuteCommand(applyStashCommand);
         Console.WriteLine(applyStashOutput);
     }
