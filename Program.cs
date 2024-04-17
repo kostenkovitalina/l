@@ -10,49 +10,35 @@ class Program
         Console.WriteLine("2. Kristina");
         Console.Write("Enter the number of the branch you want to switch to: ");
 
-        // Get user input
+        // Отримати вибір користувача
         int choice = int.Parse(Console.ReadLine());
 
-        // Switch based on user choice
-        switch (choice)
-        {
-            case 1:
-                SwitchBranch("Vitalina");
-                break;
-            case 2:
-                SwitchBranch("Kristina");
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Exiting...");
-                break;
-        }
+        // Перемикаємося на гілку згідно вибору користувача
+        string branchName = (choice == 1) ? "Vitalina" : "Kristina";
+        SwitchToBranch(branchName);
 
-        Console.ReadLine(); // Keep console window open
+        // Викликаємо потрібний файл
+        string filePath = (branchName == "Vitalina") ? "start-programs.cs" : "other-file.cs";
+        RunFile(filePath);
+
+        Console.ReadLine(); // Зберігаємо вікно консолі відкритим
     }
 
-    static void SwitchBranch(string branchName)
+    static void SwitchToBranch(string branchName)
     {
-        // Stash local changes
-        string stashCommand = "git stash";
-        string stashOutput = ExecuteCommand(stashCommand);
-        Console.WriteLine(stashOutput);
-
-        // Execute git command to switch branch
         string gitCommand = $"git checkout {branchName}";
-        string output = ExecuteCommand(gitCommand);
-        Console.WriteLine(output);
+        ExecuteCommand(gitCommand);
         Console.WriteLine($"Switched to branch: {branchName}");
-
-        // Apply stashed changes if any
-        string applyStashCommand = "git stash pop --quiet";
-
-        string applyStashOutput = ExecuteCommand(applyStashCommand);
-        Console.WriteLine(applyStashOutput);
     }
 
-    static string ExecuteCommand(string command)
+    static void RunFile(string filePath)
     {
-        // Create ProcessStartInfo
+        string dotnetCommand = $"dotnet run {filePath}";
+        ExecuteCommand(dotnetCommand);
+    }
+
+    static void ExecuteCommand(string command)
+    {
         ProcessStartInfo psi = new ProcessStartInfo
         {
             FileName = "cmd.exe",
@@ -63,28 +49,24 @@ class Program
             CreateNoWindow = true
         };
 
-        // Start the process
         Process proc = new Process { StartInfo = psi };
         proc.Start();
 
-        // Execute the command
         proc.StandardInput.WriteLine(command);
         proc.StandardInput.Flush();
         proc.StandardInput.Close();
 
-        // Get output and errors
         string output = proc.StandardOutput.ReadToEnd();
         string errors = proc.StandardError.ReadToEnd();
 
         proc.WaitForExit();
 
-        // Check for errors
         if (!string.IsNullOrEmpty(errors))
         {
             throw new Exception($"Error executing command: {errors}");
         }
 
-        return output;
+        Console.WriteLine(output);
     }
 }
 
