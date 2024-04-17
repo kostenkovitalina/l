@@ -49,43 +49,34 @@ class Program
         string applyStashOutput = ExecuteCommand(applyStashCommand);
         Console.WriteLine(applyStashOutput);
     }
-
     static string ExecuteCommand(string command)
     {
-        // Create ProcessStartInfo
         ProcessStartInfo psi = new ProcessStartInfo
         {
             FileName = "cmd.exe",
-            RedirectStandardInput = true,
+            Arguments = $"/c {command}", // Додаємо ключ /c для виконання команди і вихід з cmd.exe після завершення
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true
         };
 
-        // Start the process
-        Process proc = new Process { StartInfo = psi };
-        proc.Start();
-
-        // Execute the command
-        proc.StandardInput.WriteLine(command);
-        proc.StandardInput.Flush();
-        proc.StandardInput.Close();
-
-        // Get output and errors
-        string output = proc.StandardOutput.ReadToEnd();
-        string errors = proc.StandardError.ReadToEnd();
-
-        proc.WaitForExit();
-
-        // Check for errors
-        if (!string.IsNullOrEmpty(errors))
+        using (Process proc = new Process { StartInfo = psi })
         {
-            throw new Exception($"Error executing command: {errors}");
-        }
+            proc.Start();
+            proc.WaitForExit(); // Чекаємо завершення процесу
 
-        return output;
+            if (proc.ExitCode != 0) // Перевіряємо, чи процес завершився успішно
+            {
+                string errorMessage = proc.StandardError.ReadToEnd();
+                throw new Exception($"Error executing command: {errorMessage}");
+            }
+
+            string output = proc.StandardOutput.ReadToEnd();
+            return output;
+        }
     }
+
 }
 
 
